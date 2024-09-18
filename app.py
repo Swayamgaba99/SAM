@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import cv2
 from segment_anything import SamPredictor, sam_model_registry
 import re
+import urllib.parse
 
 model_type="vit_h"
 
@@ -50,7 +51,14 @@ def image_process(image_name,pattern):
   resized_new_image=cv2.resize(new_image,(w,h))
   img[y:y+h,x:x+w][best_mask[y:y+h,x:x+w]]=resized_new_image[best_mask[y:y+h,x:x+w]]
   return img
+  
+def extract_image_name(url):
+    parsed_url = urllib.parse.urlparse(url)
+    path = parsed_url.path
+    filename = path.split('/')[-1]
 
+    return filename
+  
 @app.route('/process_images', methods=['POST'])
 def process_images():
     product_image_url = request.json.get('product_image_url')
